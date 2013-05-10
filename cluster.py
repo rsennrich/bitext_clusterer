@@ -48,19 +48,19 @@ class Cluster():
 
         lm_entropy = float('inf')
         old_entropy = float('inf')
-        i = 0
+        iteration = 0
         while lm_entropy == float('inf') or old_entropy - lm_entropy > 1:
             old_entropy = lm_entropy
             self.train_lms()
             clusters = dict([(i, {'s':self.textfile_s, 't':self.textfile_t}) for i in range(self.clusters)])
             scores = self.score_lms(clusters)
             lm_entropy, class_entropy = self.create_clusters(scores)
-            i += 1
+            iteration += 1
             if self.goldclasses:
                 class_info = ' - class entropy: {0}'.format(class_entropy)
             else:
                 class_info = ''
-            sys.stderr.write('iteration {0}: LM entropy: {1} {2}\n'.format(i, lm_entropy, class_info))
+            sys.stderr.write('iteration {0}: LM entropy: {1} {2}\n'.format(iteration, lm_entropy, class_info))
 
 
     def initialize_clusters(self):
