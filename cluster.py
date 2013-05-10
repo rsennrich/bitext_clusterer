@@ -171,6 +171,8 @@ class Cluster():
                 sys.stderr.write('Skipping cluster ' + str(i) + ' (too small)\n')
                 continue
 
+            dist = defaultdict(float)
+
             for lang in texts:
 
                 cmd = [ngram_cmd,
@@ -184,7 +186,6 @@ class Cluster():
                 scorer = Popen(cmd, stdin=textin, stdout=PIPE, stderr=open('/dev/null', 'w'))
                 sys.stderr.write('.')
 
-                dist = {}
                 # read sentence length and log-likelihood from SRILM output
                 for k, line in enumerate(scorer.stdout):
                     if k % 4 == 0 and line.startswith('file -:'):
@@ -193,7 +194,7 @@ class Cluster():
                         length = int(line.split()[2])
                     elif k % 4 == 2:
                         j = k // 4
-                        dist[j] = -(float(line.split()[3]))/length
+                        dist[j] -= (float(line.split()[3]))/length
 
             scores = self.smooth_and_assign(i, dist, scores)
 
